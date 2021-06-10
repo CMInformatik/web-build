@@ -18,7 +18,6 @@ async function run() {
     await runStep(getPackageVersion, 'Loading package version');
     await runStep(setUpVersion, 'Prepare docker version.');
     await runStep(buildAndPush, 'Build and push docker container');
-    await runStep(createExtractContainer, 'Create extract container');
     await runStep(extractBuildResult, 'Extract build result');
     await runStep(uploadArtifacts, 'Upload artifacts');
 }
@@ -78,12 +77,9 @@ async function buildAndPush() {
     await exec.exec(`docker build . -f ${dockerFile} -t ${tag} -t ${dockerImage}:${packageVersion} `);
 }
 
-async function extractBuildResult() {
-    await exec.exec('docker cp extract:/dist ./extracted-app');
-}
-
 async function createExtractContainer() {
     await exec.exec(`docker create --name extract "${tag}"`);
+    await exec.exec('docker cp extract:/dist ./extracted-app');
     await exec.exec('docker rm extract');
 }
 
