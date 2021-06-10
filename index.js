@@ -90,6 +90,7 @@ async function createExtractContainer() {
 async function setUpVersion() {
     let repositoryName = core.getInput(inputAppName).toLowerCase();
     let version = `edge`;
+    dockerImage = `${repositoryName}`;
 
     if (github.context.ref.startsWith('refs/tags')) {
         version = github.context.ref.replace('refs/tags/', '');
@@ -103,7 +104,7 @@ async function setUpVersion() {
         version = `pr-${ev.pull_request.number}`;
     }
 
-    tag = `${repositoryName}:${version}`;
+    tag = `${dockerImage}:${version}`;
 }
 
 async function uploadArtifacts() {
