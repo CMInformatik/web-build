@@ -1,0 +1,11 @@
+{
+  "name": "asp-3.1-build",
+  "version": "1.0.0",
+  "dependencies": {
+    "@actions/core": "latest",
+    "@actions/exec": "latest",
+    "@actions/github": "latest",
+    "@actions/glob": "latest",
+    "@actions/artifact": "latest"
+  }
+}

@@ -1,0 +1,31 @@
+name: 'Build ASP 3.1'
+description: 'Builds ASP Core 3.1 WebApps'
+inputs:
+  app-name:
+    description: 'Name for artifacts and Docker images'
+    required: true
+    default: 'aspapp'
+  myget-pre-auth-url:
+    default: ""
+  docker-username:
+    required: true
+  docker-password:
+    required: true
+  push-to-docker-registry:
+    description: 'If set, the build output is pushed to Docker-Registry. '
+    required: false
+    default: false
+  build-configuration:
+    description: 'Build configuration'
+    required: false
+    default: 'debug'
+outputs:
+  version:
+    description: 'Build version'
+  is-pre-release:
+    description: 'Is pre-release'
+  artifact-name:
+    description: 'Name of uploaded artifact'
+runs:
+  using: 'node12'
+  main: 'index.js'
