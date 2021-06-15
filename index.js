@@ -79,7 +79,7 @@ async function buildAndPush() {
 
 async function extractBuildResult() {
     await exec.exec(`docker create --name extract "${tag}"`);
-    await exec.exec('docker cp extract:/dist ./extracted-app');
+    await exec.exec('docker cp extract:/app/dist ./extracted-app');
     await exec.exec('docker rm extract');
 }
 
