@@ -9,6 +9,7 @@ const os = require('os');
 
 // Input variable names
 const inputAppName = 'app-name';
+const buildConfigurationName = 'build-configuration';
 
 let dockerImage = '';
 let tag = '';
@@ -67,14 +68,15 @@ async function getPackageVersion() {
 
 async function buildAndPush() {
     let dockerFile = undefined;
+    let buildConfiguration = core.getInput(buildConfigurationName)?.toLowerCase() || '';
     
     await exec.exec('find . -name "Dockerfile"', [], { listeners: { stdout: (data) => { dockerFile = data.toString() } } });
-    if(!dockerFile) {
+    if (!dockerFile) {
         console.error('Dockerfile not found');
     }
 
     dockerFile = dockerFile.replace(/(\r\n|\n|\r)/gm, '');
-    await exec.exec(`docker build . -f ${dockerFile} -t ${tag} -t ${dockerImage}:${packageVersion} `);
+    await exec.exec(`docker build . -f ${dockerFile} -t ${tag} -t ${dockerImage}:${packageVersion} --build-arg BUILD_CONFIGURATION=${buildConfiguration}`);
 }
 
 async function extractBuildResult() {
