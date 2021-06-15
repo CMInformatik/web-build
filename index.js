@@ -76,7 +76,7 @@ async function buildAndPush() {
     }
 
     dockerFile = dockerFile.replace(/(\r\n|\n|\r)/gm, '');
-    await exec.exec(`docker build . -f ${dockerFile} -t ${tag} -t ${dockerImage}:${packageVersion} --build-arg BUILD_CONFIGURATION="${buildConfiguration}"`);
+    await exec.exec(`docker build . -f ${dockerFile} -t ${tag} -t ${dockerImage}:${packageVersion} --build-arg BUILD_CONFIGURATION=\"${buildConfiguration}\"`);
 }
 
 async function extractBuildResult() {
