@@ -68,7 +68,7 @@ async function getPackageVersion() {
 
 async function buildAndPush() {
     let dockerFile = undefined;
-    let buildConfiguration = core.getInput(buildConfigurationName)?.toLowerCase() || '';
+    let buildConfiguration = core.getInput(buildConfigurationName).toLowerCase() || '';
     
     await exec.exec('find . -name "Dockerfile"', [], { listeners: { stdout: (data) => { dockerFile = data.toString() } } });
     if (!dockerFile) {
