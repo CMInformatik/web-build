@@ -106,7 +106,7 @@ async function setUpVersion() {
 }
 
 async function uploadArtifacts() {
-    const globber = await glob.create('./extracted-app/**');
+    const globber = await glob.create('./extracted-app');
     const files = await globber.glob();
     const name = `${core.getInput(inputAppName)}-${packageVersion}`;
 
