@@ -52,14 +52,8 @@ async function getPackageVersion() {
     await exec.exec(`dirname ${versionJsonPath}`, [], { listeners: { stdout: (data) => { versionJsonDirectory = `${data.toString()}` } } });
     versionJsonDirectory = versionJsonDirectory.replace(/(\r\n|\n|\r)/gm, '') + '/';
 
-    let commandArgs = `-p ${versionJsonDirectory}`;
-    if(versionJsonDirectory === './') {
-        console.log('calling nbgv without directorypath');
-        commandArgs = '';
-    }
-    
-    await exec.exec(`nbgv get-version ${commandArgs}`);
-    await exec.exec(`nbgv get-version -f json ${commandArgs}`, [], { listeners: { stdout: (data) => { versionJson += data.toString() } } });
+    await exec.exec(`nbgv get-version -p ${versionJsonDirectory}`);
+    await exec.exec(`nbgv get-version -f json -p ${versionJsonDirectory}`, [], { listeners: { stdout: (data) => { versionJson += data.toString() } } });
 
     packageVersion = JSON.parse(versionJson)['CloudBuildAllVars']['NBGV_NuGetPackageVersion'];
     core.setOutput("version", packageVersion);
