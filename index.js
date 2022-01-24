@@ -37,7 +37,9 @@ async function runStep(step, displayText) {
 }
 
 async function getPackageVersion() {
+  console.log("installing nbgv via dotnet tool");
   await exec.exec("dotnet tool install -g nbgv");
+  console.log("done installing nbgv via dotnet tool");
   core.addPath(path.join(os.homedir(), ".dotnet", "tools"));
 
   let versionJsonPath = undefined;
