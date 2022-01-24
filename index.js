@@ -37,33 +37,66 @@ async function runStep(step, displayText) {
 }
 
 async function getPackageVersion() {
-    await exec.exec('dotnet tool install -g nbgv');
-    core.addPath(path.join(os.homedir(), '.dotnet', 'tools'));
+  await exec.exec("dotnet tool install -g nbgv");
+  core.addPath(path.join(os.homedir(), ".dotnet", "tools"));
 
-    let versionJsonPath = undefined;
-    let versionJsonDirectory = undefined;
-    let versionJson = '';
+  let versionJsonPath = undefined;
+  let versionJsonDirectory = undefined;
+  let versionJson = "";
 
-    await exec.exec('find . -name "version.json"', [], { listeners: { stdout: (data) => { versionJsonPath = data.toString() } } });
-    if(!versionJsonPath) {
-        console.error('Version Json not found.');
-    }
+  console.log("find version.json");
+  await exec.exec('find . -name "version.json"', [], {
+    listeners: {
+      stdout: (data) => {
+        versionJsonPath = data.toString();
+      },
+    },
+  });
 
-    await exec.exec(`dirname ${versionJsonPath}`, [], { listeners: { stdout: (data) => { versionJsonDirectory = `${data.toString()}` } } });
-    versionJsonDirectory = versionJsonDirectory.replace(/(\r\n|\n|\r)/gm, '') + '/';
+  if (!versionJsonPath) {
+    console.error("Version Json not found.");
+  }
 
-    await exec.exec(`nbgv get-version -p ${versionJsonDirectory}`);
-    await exec.exec(`nbgv get-version -f json -p ${versionJsonDirectory}`, [], { listeners: { stdout: (data) => { versionJson += data.toString() } } });
+  console.log("find directory of version.json");
+  await exec.exec(`dirname ${versionJsonPath}`, [], {
+    listeners: {
+      stdout: (data) => {
+        versionJsonDirectory = `${data.toString()}`;
+      },
+    },
+  });
 
-    packageVersion = JSON.parse(versionJson)['CloudBuildAllVars']['NBGV_NuGetPackageVersion'];
-    core.setOutput("version", packageVersion);
+  versionJsonDirectory = versionJsonDirectory.replace(/(\r\n|\n|\r)/gm, "") + "/";
 
-    let isPreRelease = false;
-    if(packageVersion.includes('-')) {
-        isPreRelease = true;
-    }
+  console.log(`run nbgv get-version -p ${versionJsonDirectory}`);
+  await exec.exec(`nbgv get-version -p ${versionJsonDirectory}`);
+  
+  console.log(`run nbgv get-version -f json -p ${versionJsonDirectory}`);
+  await exec.exec(`nbgv get-version -f json -p ${versionJsonDirectory}`, [], {
+    listeners: {
+      stdout: (data) => {
+        versionJson += data.toString();
+      },
+      stderr: (data) => {
+        myError += data.toString().trim();
+      }
+    },
+  });
 
-    core.setOutput("is-pre-release", isPreRelease);
+  if (myError) {
+    throw new Error(myError);
+  }
+
+  console.log(`set version in output`);
+  packageVersion = JSON.parse(versionJson)["CloudBuildAllVars"]["NBGV_NuGetPackageVersion"];
+  core.setOutput("version", packageVersion);
+
+  let isPreRelease = false;
+  if (packageVersion.includes("-")) {
+    isPreRelease = true;
+  }
+
+  core.setOutput("is-pre-release", isPreRelease);
 }
 
 async function buildAndPush() {
