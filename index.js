@@ -72,6 +72,7 @@ async function getPackageVersion() {
   await exec.exec(`nbgv get-version -p ${versionJsonDirectory}`);
   
   console.log(`run nbgv get-version -f json -p ${versionJsonDirectory}`);
+  let myError = '';
   await exec.exec(`nbgv get-version -f json -p ${versionJsonDirectory}`, [], {
     listeners: {
       stdout: (data) => {
